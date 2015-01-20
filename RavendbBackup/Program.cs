@@ -97,6 +97,16 @@ namespace RavendbBackup
                         store.Dispose();
 
                         System.Console.WriteLine("Zipping ... startet");
+
+                        string backupdateFormat = ((int) DateTime.Now.DayOfWeek).ToString();
+
+                        var backupDateFormatAppSettings = ConfigurationManager.AppSettings["BackupDateFormat"];
+
+                        if (!String.IsNullOrEmpty(backupDateFormatAppSettings))
+                        {
+                            backupdateFormat = DateTime.Now.ToString(backupDateFormatAppSettings);
+                        }
+
                         using (ZipFile zip = new ZipFile())
                         {
                             try
@@ -104,7 +114,7 @@ namespace RavendbBackup
                                 zip.AddDirectory(combinedFolder);
                                 System.Console.WriteLine("Added");
                                 zip.ParallelDeflateThreshold = -1;
-                                zip.Save(combinedFolder + "_" + ((int) DateTime.Now.DayOfWeek) + ".zip");
+                                zip.Save(combinedFolder + "_" + backupdateFormat + ".zip");
                             }
                             catch (Exception ex)
                             {
